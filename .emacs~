@@ -300,4 +300,3 @@
 (global-set-key (kbd "C-<tab>") 'switch-to-previous-buffer)
 ;; キーバインド: C-<iso-lefttab> で次のバッファに切り替え
 (global-set-key (kbd "C-<iso-lefttab>") 'switch-to-next-buffer)
-
