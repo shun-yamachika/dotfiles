@@ -165,17 +165,11 @@
 
 
 ;; 追記-------------------------------------------------------
-;; --- quelpa bootstrap ---
-(unless (require 'quelpa nil 'noerror)
-  (with-temp-buffer
-    (url-insert-file-contents
-     "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
-    (eval-buffer)))
-
-;; --- dired-narrow install (if missing) ---
-(unless (require 'dired-narrow nil 'noerror)
-  (quelpa '(dired-narrow :fetcher github :repo "Fuco1/dired-hacks"))
-  (require 'dired-narrow))  ;; ここで読み込んでおく
+;; --- dired-narrow setup ---
+;; dired-narrowのload-pathを追加
+(add-to-list 'load-path "~/.emacs.d/quelpa/build/dired-narrow")
+(add-to-list 'load-path "~/.emacs.d/quelpa/build/dash")
+(require 'dired-narrow nil 'noerror)
 
 ;; 好みでキーバインド
 (with-eval-after-load 'dired
@@ -193,6 +187,37 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; scratch-bufferを呼び出すコマンド
+(defun switch-to-scratch-buffer ()
+    "Switch to *scratch* buffer, creating it if it doesn't exist."
+    (interactive)
+    (let ((scratch-buffer (get-buffer "*scratch*")))
+      (if scratch-buffer
+          (switch-to-buffer scratch-buffer)
+        (switch-to-buffer (get-buffer-create "*scratch*"))
+        (lisp-interaction-mode))))
+
+  ;; キーバインドの例: C-c s で*scratch*バッファに切り替え
+  (global-set-key (kbd "C-c s") 'switch-to-scratch-buffer)
+
+;; 前のバッファに戻るコマンド
+(defun switch-to-previous-buffer ()
+  "Switch to the previously visited buffer in the buffer list."
+  (interactive)
+  (bury-buffer))
+
+;; 次のバッファに進むコマンド
+(defun switch-to-next-buffer ()
+  "Switch to the next buffer in the buffer list."
+  (interactive)
+  (switch-to-buffer (car (last (buffer-list)))))
+
+;; キーバインド: C-<tab> で前のバッファに切り替え
+(global-set-key (kbd "C-<tab>") 'switch-to-previous-buffer)
+;; キーバインド: C-<iso-lefttab> で次のバッファに切り替え
+(global-set-key (kbd "C-<iso-lefttab>") 'switch-to-next-buffer)
+
 
 
 ;; org-mode LaTeX export設定
@@ -216,38 +241,6 @@
         "pdflatex -interaction=nonstopmode -output-directory=%o %f"
         "pdflatex -interaction=nonstopmode -output-directory=%o %f"))
 
-;; BibTeXを使わない場合のプロセス（コメントアウトしておく）
-;; (setq org-latex-pdf-process
-;;       '("platex -interaction=nonstopmode -output-directory=%o %f"
-;;         "platex -interaction=nonstopmode -output-directory=%o %f"
-;;         "dvipdfmx %b.dvi"))
-
-;; ieicej document classの定義
-;; [NO-DEFAULT-PACKAGES]を使うことで、hyperrefなどのデフォルトパッケージを除外
-(add-to-list 'org-latex-classes
-             '("ieicej"
-               "\\documentclass[technicalreport,dvipdfmx]{ieicej}
-[NO-DEFAULT-PACKAGES]
-[PACKAGES]
-[EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-;; ieicejsp document classの定義（学生ポスターセッション用）
-(add-to-list 'org-latex-classes
-             '("ieicejsp"
-               "\\documentclass[twocolumn,a4paper,dvipdfmx]{ieicejsp}
-[NO-DEFAULT-PACKAGES]
-[PACKAGES]
-[EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 ;; IEEEtran document classの定義（IEEE国際会議用）
 (add-to-list 'org-latex-classes
@@ -291,65 +284,84 @@
 (setq org-latex-title-command "")
 
 
-;; scratch-bufferを呼び出すコマンド
-(defun switch-to-scratch-buffer ()
-    "Switch to *scratch* buffer, creating it if it doesn't exist."
-    (interactive)
-    (let ((scratch-buffer (get-buffer "*scratch*")))
-      (if scratch-buffer
-          (switch-to-buffer scratch-buffer)
-        (switch-to-buffer (get-buffer-create "*scratch*"))
-        (lisp-interaction-mode))))
 
-  ;; キーバインドの例: C-c s で*scratch*バッファに切り替え
-  (global-set-key (kbd "C-c s") 'switch-to-scratch-buffer)
+;; BibTeXを使わない場合のプロセス（コメントアウトしておく）
+;; (setq org-latex-pdf-process
+;;       '("platex -interaction=nonstopmode -output-directory=%o %f"
+;;         "platex -interaction=nonstopmode -output-directory=%o %f"
+;;         "dvipdfmx %b.dvi"))
 
-;; 前のバッファに戻るコマンド
-(defun switch-to-previous-buffer ()
-  "Switch to the previously visited buffer in the buffer list."
-  (interactive)
-  (bury-buffer))
+;; ;; ieicej document classの定義
+;; ;; [NO-DEFAULT-PACKAGES]を使うことで、hyperrefなどのデフォルトパッケージを除外
+;; (add-to-list 'org-latex-classes
+;;              '("ieicej"
+;;                "\\documentclass[technicalreport,dvipdfmx]{ieicej}
+;; [NO-DEFAULT-PACKAGES]
+;; [PACKAGES]
+;; [EXTRA]"
+;;                ("\\section{%s}" . "\\section*{%s}")
+;;                ("\\subsection{%s}" . "\\subsection*{%s}")
+;;                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-;; 次のバッファに進むコマンド
-(defun switch-to-next-buffer ()
-  "Switch to the next buffer in the buffer list."
-  (interactive)
-  (switch-to-buffer (car (last (buffer-list)))))
+;; ;; ieicejsp document classの定義（学生ポスターセッション用）
+;; (add-to-list 'org-latex-classes
+;;              '("ieicejsp"
+;;                "\\documentclass[twocolumn,a4paper,dvipdfmx]{ieicejsp}
+;; [NO-DEFAULT-PACKAGES]
+;; [PACKAGES]
+;; [EXTRA]"
+;;                ("\\section{%s}" . "\\section*{%s}")
+;;                ("\\subsection{%s}" . "\\subsection*{%s}")
+;;                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-;; キーバインド: C-<tab> で前のバッファに切り替え
-(global-set-key (kbd "C-<tab>") 'switch-to-previous-buffer)
-;; キーバインド: C-<iso-lefttab> で次のバッファに切り替え
-(global-set-key (kbd "C-<iso-lefttab>") 'switch-to-next-buffer)
+
 
 
 ;; paperi.org用の進捗度自動更新（texファイル直接書き換え方式）
-(defun my-update-progress-in-tex (orig-fun &rest args)
-  "org-latex-compile実行前にtexファイルの進捗度を更新する"
-  (let ((tex-file (car args)))
-    (when (and tex-file
-               (file-exists-p tex-file)
-               (string-match "paperi\\.tex$" tex-file))
-      (let* ((script-path (concat (file-name-directory tex-file) "count-progress.sh"))
-             (output (shell-command-to-string
-                      (format "bash %s %s" script-path tex-file))))
-        (when (string-match "\\\\progress{\\([0-9]+\\)}{\\([0-9]+\\)}{\\([0-9]+\\)}" output)
-          (let ((jp-count (match-string 1 output))
-                (en-count (match-string 2 output))
-                (fig-count (match-string 3 output)))
-            ;; texファイルを直接書き換え
-            (with-temp-file tex-file
-              (insert-file-contents tex-file)
-              (goto-char (point-min))
-              (when (re-search-forward "\\\\progress{[^}]*}{[^}]*}{[^}]*}" nil t)
-                (replace-match (format "\\\\progress{%s}{%s}{%s}"
-                                       jp-count en-count fig-count))))
-            (message "進捗度を自動更新しました: %s pt (日本語:%s 英語:%s 図:%s)"
-                     (+ (* (string-to-number jp-count) 1.7)
-                        (string-to-number en-count)
-                        (* (string-to-number fig-count) 1500))
-                     jp-count en-count fig-count))))))
-  ;; 元の関数を実行（PDF生成）
-  (apply orig-fun args))
+;; (defun my-update-progress-in-tex (orig-fun &rest args)
+;;   "org-latex-compile実行前にtexファイルの進捗度を更新する"
+;;   (let ((tex-file (car args)))
+;;     (when (and tex-file
+;; p               (file-exists-p tex-file)
+;;                (string-match "paperi\\.tex$" tex-file))
+;;       (let* ((script-path (concat (file-name-directory tex-file) "count-progress.sh"))
+;;              (output (shell-command-to-string
+;;                       (format "bash %s %s" script-path tex-file))))
+;;         (when (string-match "\\\\progress{\\([0-9]+\\)}{\\([0-9]+\\)}{\\([0-9]+\\)}" output)
+;;           (let ((jp-count (match-string 1 output))
+;;                 (en-count (match-string 2 output))
+;;                 (fig-count (match-string 3 output)))
+;;             ;; texファイルを直接書き換え
+;;             (with-temp-file tex-file
+;;               (insert-file-contents tex-file)
+;;               (goto-char (point-min))
+;;               (when (re-search-forward "\\\\progress{[^}]*}{[^}]*}{[^}]*}" nil t)
+;;                 (replace-match (format "\\\\progress{%s}{%s}{%s}"
+;;                                        jp-count en-count fig-count))))
+;;             (message "進捗度を自動更新しました: %s pt (日本語:%s 英語:%s 図:%s)"
+;;                      (+ (* (string-to-number jp-count) 1.7)
+;;                         (string-to-number en-count)
+;;                         (* (string-to-number fig-count) 1500))
+;;                      jp-count en-count fig-count))))))
+;;   ;; 元の関数を実行（PDF生成）
+;;   (apply orig-fun args))
 
-;; org-latex-compileにadviceを追加
-(advice-add 'org-latex-compile :around #'my-update-progress-in-tex)
+;; ;; org-latex-compileにadviceを追加
+;; (advice-add 'org-latex-compile :around #'my-update-progress-in-tex)
+;; chatgpt-el の設定
+(add-to-list 'load-path "/home/shun/chatgpt-el")
+(autoload 'chatgpt-query "chatgpt" nil t)
+(autoload 'chatgpt-query-api "chatgpt" nil t)
+(autoload 'chatgpt-insert-reply "chatgpt" nil t)
+(autoload 'chatgpt-fill "chatgpt" nil t)
+(autoload 'chatgpt-select-engine "chatgpt" nil t)
+(global-set-key "\C-cb" 'chatgpt-query)
+(global-set-key "\C-cQ" 'chatgpt-insert-reply)
+(global-set-key "\C-cf" 'chatgpt-fill)
+(global-set-key "\C-cE" 'chatgpt-select-engine)
+(setq chatgpt-engine "ChatGPT")
+(setq chatgpt-prog "/home/shun/chatgpt-el/chatgpt-cdp")
