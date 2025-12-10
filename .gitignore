@@ -1,0 +1,9 @@
+# Backup files
+*~
+*.bak
+*.backup
+*.bak.*
+*.fixbak.*
+
+# Fish variables (machine-specific)
+.config/fish/fish_variables

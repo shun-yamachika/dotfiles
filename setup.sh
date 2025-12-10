@@ -20,4 +20,20 @@ for file in $FILES; do
     fi
 done
 
+# .config ディレクトリの処理
+if [ -d $DOTFILES_DIR/.config/fish ]; then
+    # .config ディレクトリが存在しない場合は作成
+    mkdir -p ~/.config
+
+    # 既存のfishディレクトリがあり、シンボリックリンクでない場合はバックアップ
+    if [ -d ~/.config/fish ] && [ ! -L ~/.config/fish ]; then
+        mv ~/.config/fish ~/.config/fish.backup
+        echo "Backed up existing .config/fish"
+    fi
+
+    # シンボリックリンク作成
+    ln -sf $DOTFILES_DIR/.config/fish ~/.config/fish
+    echo "Created symlink for .config/fish"
+fi
+
 echo "Setup complete!"
