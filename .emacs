@@ -180,7 +180,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(dired-narrow dired-hacks-utils dash)))
+ '(package-selected-packages '(counsel ivy dired-narrow dired-hacks-utils dash)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -283,6 +283,21 @@
 ;; exportで\maketitleを自動挿入しない（手動で配置するため）
 (setq org-latex-title-command "")
 
+;; IEEEtranクラス使用時はBeamerエクスポートを無効化
+(defun my-org-export-disable-beamer-for-ieeetran (backend)
+  "Disable Beamer export when using IEEEtran class."
+  (when (and (eq backend 'beamer)
+             (let ((class (org-export-data (plist-get (org-export-get-environment) :latex-class) nil)))
+               (string= class "IEEEtran")))
+    (user-error "IEEEtran class should use LaTeX export (C-c C-e l l), not Beamer export")))
+
+;; org-latex-classesに登録されているクラスがBeamerテンプレートを使わないようにする
+(with-eval-after-load 'ox-latex
+  ;; LaTeXエクスポート時にBeamerのフックが呼ばれないようにする
+  (when (boundp 'org-export-before-parsing-functions)
+    (setq org-export-before-parsing-functions
+          (remove 'org-beamer-p org-export-before-parsing-functions))))
+
 
 
 ;; BibTeXを使わない場合のプロセス（コメントアウトしておく）
@@ -365,3 +380,23 @@
 (global-set-key "\C-cE" 'chatgpt-select-engine)
 (setq chatgpt-engine "ChatGPT")
 (setq chatgpt-prog "/home/shun/chatgpt-el/chatgpt-cdp")
+
+
+;;find-fileの強化版
+
+;; Ivy（補完システム）
+(use-package ivy
+  :ensure t
+  :diminish
+  :bind (("C-s" . swiper))  ;; 検索も強化される
+  :config
+  (ivy-mode 1))
+
+;; Counsel（Ivyを拡張して find-file や検索を強化）
+(use-package counsel
+  :ensure t
+  :bind (("C-x C-f" . counsel-find-file)  ;; ★ここで find-file を強化
+         ("M-x" . counsel-M-x)            ;; M-x も強化される
+         ("C-x C-r" . counsel-recentf))
+  :config
+  (counsel-mode 1))

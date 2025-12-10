@@ -1,0 +1,22 @@
+# -*- Conf -*-
+# 
+# Startup file for GNU screen.
+# Copyright (C) 1993-2019 Hiroyuki Ohsaki.
+# All rights reserved.
+# 
+# $Id: .screenrc,v 1.29 2020/08/22 05:21:06 ohsaki Exp $
+# 
+
+escape ^Z^Z
+defscrollback 100000
+hardstatus ignore
+startup_message off
+
+bind 1 only
+bind 2 split
+bind o focus
+
+#termcap xterm* 'so=\E[7m\E[36m:se=\E[m:us=\E[4m\E[32m:ue=\E[m:md=\E[1m\E[33m:mr=\E[7m:me=\E[m'
+#terminfo rxvt* 'so=\E[7m\E[36m:se=\E[m:us=\E[4m\E[32m:ue=\E[m:md=\E[1m\E[33m:mr=\E[7m:me=\E[m'
+
+screen 0 $SHELL
