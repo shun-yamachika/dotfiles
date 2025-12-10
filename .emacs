@@ -283,6 +283,22 @@
 ;; exportで\maketitleを自動挿入しない（手動で配置するため）
 (setq org-latex-title-command "")
 
+;; Beamer用のタイトルページ自動生成設定
+(with-eval-after-load 'ox-beamer
+  (defun my-org-beamer-title-command (contents info)
+    "Beamerエクスポート時にタイトルページフレームを生成"
+    (let ((title (org-export-data (plist-get info :title) info)))
+      (if (org-string-nw-p title)
+          "\\begin{frame}[plain]\n\\titlepage\n\\end{frame}\n\n"
+        "")))
+
+  ;; org-latex-title-commandをBeamerの場合のみオーバーライド
+  (defun my-org-beamer-template-advice (orig-fun contents info)
+    (let ((org-latex-title-command (my-org-beamer-title-command contents info)))
+      (funcall orig-fun contents info)))
+
+  (advice-add 'org-beamer-template :around #'my-org-beamer-template-advice))
+
 ;; IEEEtranクラス使用時はBeamerエクスポートを無効化
 (defun my-org-export-disable-beamer-for-ieeetran (backend)
   "Disable Beamer export when using IEEEtran class."
