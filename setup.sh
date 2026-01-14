@@ -36,4 +36,20 @@ if [ -d $DOTFILES_DIR/.config/fish ]; then
     echo "Created symlink for .config/fish"
 fi
 
+# IEEEtran.cls のセットアップ
+if [ -f $DOTFILES_DIR/IEEEtran.cls ]; then
+    # ユーザーローカルのtexmfディレクトリを作成
+    mkdir -p ~/texmf/tex/latex/ieeetran
+
+    # IEEEtran.clsをコピー
+    cp $DOTFILES_DIR/IEEEtran.cls ~/texmf/tex/latex/ieeetran/
+    echo "Copied IEEEtran.cls to ~/texmf/tex/latex/ieeetran/"
+
+    # texhashを実行してファイルデータベースを更新（可能な場合）
+    if command -v mktexlsr &> /dev/null; then
+        mktexlsr ~/texmf
+        echo "Updated TeX file database"
+    fi
+fi
+
 echo "Setup complete!"
