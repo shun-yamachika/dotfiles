@@ -416,3 +416,9 @@
          ("C-x C-r" . counsel-recentf))
   :config
   (counsel-mode 1))
+
+(require 'ox)
+(require 'ox-md)
+(setq org-md-headline-style 'atx)  ;; # 見出し形式
+(setq org-export-with-section-numbers nil)
+(setq org-export-with-toc nil)
