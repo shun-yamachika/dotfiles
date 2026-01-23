@@ -147,20 +147,23 @@
 ;;; ==========================================================================
 
 ;; \date{}, \title{}, \hypersetup{}を出力しない設定
-;; （ieicejクラスおよびIEEEtranクラス使用時）
+;; （ieicejクラス、IEEEtranクラス、bachelorクラス使用時）
 ;;
 ;; これらのクラスでは、タイトルや日付を独自のコマンドで管理するため
 ;; org-modeが自動生成する\date{}, \title{}などが不要です
 (defun my-org-latex-remove-date-title (contents)
-  "Remove \\date{}, \\title{}, and \\hypersetup{} from LaTeX output for ieicej and IEEEtran classes."
+  "Remove \\hypersetup{} and empty \\title{}, \\author{}, \\date{} for ieicej, IEEEtran, and bachelor classes."
   (let ((new-contents contents))
-    ;; ieicejクラスまたはIEEEtranクラスを使っている場合のみ処理
+    ;; ieicejクラス、IEEEtranクラス、またはbachelorクラス（jarticle）を使っている場合のみ処理
     (when (or (string-match "\\\\documentclass.*{ieicej}" new-contents)
-              (string-match "\\\\documentclass.*{IEEEtran}" new-contents))
-      (setq new-contents (replace-regexp-in-string "\\\\date{[^}]*}\n" "" new-contents))
-      (setq new-contents (replace-regexp-in-string "\\\\title{}\n" "" new-contents))
+              (string-match "\\\\documentclass.*{IEEEtran}" new-contents)
+              (string-match "\\\\documentclass.*{jarticle}" new-contents))
       ;; \hypersetup{...}を削除（複数行にまたがる場合も対応）
-      (setq new-contents (replace-regexp-in-string "\\\\hypersetup{\\(\n\\|.\\)*?}\n" "" new-contents)))
+      (setq new-contents (replace-regexp-in-string "\\\\hypersetup{\\(\n\\|.\\)*?}\n" "" new-contents))
+      ;; 空の\author{}、\date{}、\title{}を削除（改行も含む）
+      (setq new-contents (replace-regexp-in-string "\\\\author{}\n" "" new-contents))
+      (setq new-contents (replace-regexp-in-string "\\\\date{}\n" "" new-contents))
+      (setq new-contents (replace-regexp-in-string "\\\\title{}\n" "" new-contents)))
     new-contents))
 
 (advice-add 'org-latex-template :filter-return #'my-org-latex-remove-date-title)

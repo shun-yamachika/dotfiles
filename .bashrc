@@ -113,3 +113,5 @@ if ! shopt -oq posix; then
 fi
 [ -r /home/shun/.byobu/prompt ] && . /home/shun/.byobu/prompt   #byobu-prompt#
 export PATH="$HOME/bin:$PATH"
+export TEXINPUTS=.:~/latexsample/paper-templates/bachelor/macro:
+export TEXINPUTS=.:~/latexsample/paper-templates/bachelor/macro:
