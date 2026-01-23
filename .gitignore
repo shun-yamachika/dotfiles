@@ -10,3 +10,7 @@
 
 # Flylint temporary files
 *_flylint
+
+# Docker test files
+Dockerfile.test
+get-docker.sh

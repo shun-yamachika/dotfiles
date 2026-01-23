@@ -90,3 +90,8 @@ alias netsquid-env="source ~/quantum/LinkSelFiE/netsquid-env/bin/activate.fish"
 set -gx PATH $HOME/.npm-global/bin $PATH
 
 set -gx PATH /home/shun/.local/bin $PATH
+
+# nb-env virtual environment shortcut
+function nb-env
+    source /home/shun/nb-env/bin/activate.fish
+end
