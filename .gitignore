@@ -1,0 +1,16 @@
+# Backup files
+*~
+*.bak
+*.backup
+*.bak.*
+*.fixbak.*
+
+# Fish variables (machine-specific)
+.config/fish/fish_variables
+
+# Flylint temporary files
+*_flylint
+
+# Docker test files
+Dockerfile.test
+get-docker.sh

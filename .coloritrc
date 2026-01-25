@@ -1,0 +1,32 @@
+divert(`-1')
+define(`bold', `1')
+define(`gray', `30')
+define(`red', `31')
+define(`green', `32')
+define(`yellow', `33')
+define(`blue', `34')
+define(`magenta', `35')
+define(`cyan', `36')
+define(`white', `37')
+define(`mark', ``mark "$1"''  `ifelse(`$#', `3', ``"\033[$2;$3m"'', ``"\033[$2m"'')' `"\033[m"')
+divert
+
+# dictionary
+mark(`\[[^\]]+\]', green)
+mark(`{[^}]+}', yellow)
+mark(`_[^_]+_', green)
+mark(`^ *[0-9]+', blue)
+mark(`^ *[0-9]+)', blue)
+mark(`^\* .*', blue)
+mark(`^\*\* .*', yellow)
+mark(`^ *-.*', red)
+
+mark(`</?[^>]+>', blue)
+mark(`\w+=', yellow)
+mark(`"[^"]*"', red)
+
+# ReST
+mark(`\.\. [^:]+::', cyan)
+mark(`:[a-z]+:', green)
+mark(`\*[^*]+\*', yellow)
+mark(`\x60[^\x60]+\x60', magenta)
