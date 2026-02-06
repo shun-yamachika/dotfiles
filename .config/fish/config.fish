@@ -70,6 +70,10 @@ alias m 'lv -c'
 alias p pyhelp
 alias t tail
 alias x mupdf
+alias bl-keyboard 'bluetoothctl connect EF:1B:C1:B8:6E:08'
+alias bl-headphone 'bluetoothctl connect 80:99:E7:FF:AC:63'
+alias clamshell-on 'xrandr --output eDP-1 --off --output HDMI-1 --auto'
+alias clamshell-off 'xrandr --output eDP-1 --auto --output HDMI-1 --auto --same-as eDP-1'
 
 if status --is-interactive
 	if status --is-login
@@ -86,7 +90,7 @@ if command -v pyenv >/dev/null
     pyenv init - fish | source
 end
 
-alias netsquid-env="source ~/quantum/LinkSelFiE/netsquid-env/bin/activate.fish"
+alias netsquid-env="source ~/LinkSelFiE/netsquid-env/bin/activate.fish"
 set -gx PATH $HOME/.npm-global/bin $PATH
 
 set -gx PATH /home/shun/.local/bin $PATH
@@ -94,4 +98,32 @@ set -gx PATH /home/shun/.local/bin $PATH
 # nb-env virtual environment shortcut
 function nb-env
     source /home/shun/nb-env/bin/activate.fish
+end
+
+# Screen recording function with auto-incrementing filenames
+function rec
+    # Create Videos directory if it doesn't exist
+    mkdir -p ~/Videos
+
+    # Find the next available number
+    set -l num 1
+    while test -e ~/Videos/output$num.mp4
+        set num (math $num + 1)
+    end
+
+    # Start recording
+    echo "録画開始: ~/Videos/output$num.mp4"
+    echo "停止するには Ctrl+C を押してください"
+    ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i :0.0 -f alsa -i default -c:v libx264 -preset ultrafast -c:a aac ~/Videos/output$num.mp4
+end
+
+# Audio output switching functions
+function audio-hdmi
+    pactl set-default-sink alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp_3__sink
+    echo "HDMI出力に切り替えました"
+end
+
+function audio-speaker
+    pactl set-default-sink alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp__sink
+    echo "本体スピーカーに切り替えました"
 end

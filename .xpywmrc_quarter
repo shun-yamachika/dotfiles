@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+
+global TITLE_FONT
+TITLE_FONT = '-hiro-fixed-medium-r-normal--8-80-75-75-c-80-iso646.1991-irv'
+
+KEYBOARD_HANDLER['3'] = {
+    'modifier': X.Mod1Mask | X.ControlMask, 'command': 'pidof -f qutebrowser || qutebrowser &'
+}
+KEYBOARD_HANDLER['5'] = {
+    'modifier': X.Mod1Mask | X.ControlMask, 'command': 'firefox-esr https://chat.openai.com  &'
+}
+KEYBOARD_HANDLER['7'] = {
+    'modifier': X.Mod1Mask | X.ControlMask, 'command': 'chromium --remote-debugging-port=9000 --remote-allow-origins=http://127.0.0.1:9000 &'
+}
+
+# regexp: [x, y, width, height]
+# 1/4縮尺モード: 全て半分にして上半分に配置
+global LAYOUT_RULES
+LAYOUT_RULES = {
+    r'xterm|rxvt': [.25, .15, .25, .35],
+    r'emacs': [0, 0, .25 - LAYOUT_OFFSET/2, .5],
+    r'firefox|chrom(e|ium)|midori|qutebrowser':
+    [.25 - LAYOUT_OFFSET/2, 0, .25 + LAYOUT_OFFSET/2, .5],
+    r'pdf|dvi|office|acroread|tgif|mathematica|libre':
+    [.25 - LAYOUT_OFFSET/2, 0, .25 + LAYOUT_OFFSET/2, .5],
+}

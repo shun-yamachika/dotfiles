@@ -12,6 +12,7 @@
 ;; Global keybindings
 (global-set-key "\C-z\C-z" 'shell)
 (global-set-key "\M-h" 'help-for-help)
+(global-set-key (kbd "C-x C-a") 'artist-mode)
 ;(global-set-key [mouse-4] 'previous-line)
 ;(global-set-key [mouse-5] 'next-line)
 ;(global-set-key [mouse-6] (lambda () (interactive)))
