@@ -115,3 +115,13 @@ fi
 export PATH="$HOME/bin:$PATH"
 export TEXINPUTS=.:~/latexsample/paper-templates/bachelor/macro:
 export TEXINPUTS=.:~/latexsample/paper-templates/bachelor/macro:
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Use Node.js 20 by default for Gemini CLI
+nvm use 20 > /dev/null 2>&1
+
+# Gemini API Key
+export GEMINI_API_KEY="AIzaSyBuT2eaQxR4H21Jme-oZsRA5yg0NOBU04c"

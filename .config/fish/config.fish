@@ -127,3 +127,20 @@ function audio-speaker
     pactl set-default-sink alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp__sink
     echo "本体スピーカーに切り替えました"
 end
+
+# nvm setup for fish
+function nvm
+    bass source ~/.nvm/nvm.sh --no-use ';' nvm $argv
+end
+
+# Load nvm and use Node.js 20
+if test -d ~/.nvm
+    set -gx NVM_DIR ~/.nvm
+    # Use Node.js 20 if nvm is available
+    if test -e ~/.nvm/versions/node/v20.20.0/bin
+        set -gx PATH ~/.nvm/versions/node/v20.20.0/bin $PATH
+    end
+end
+
+# Gemini API Key
+set -gx GEMINI_API_KEY AIzaSyBuT2eaQxR4H21Jme-oZsRA5yg0NOBU04c
