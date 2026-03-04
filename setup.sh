@@ -80,4 +80,12 @@ if [ -f $DOTFILES_DIR/IEEEtran.cls ]; then
     fi
 fi
 
+# xpywm のセットアップ
+if [ -f $DOTFILES_DIR/xpywm ]; then
+    mkdir -p ~/bin
+    cp $DOTFILES_DIR/xpywm ~/bin/xpywm
+    chmod +x ~/bin/xpywm
+    echo "Copied xpywm to ~/bin/xpywm"
+fi
+
 echo "Setup complete!"

@@ -26,19 +26,18 @@ function fish_prompt
         echo -n -s $id $win ':' $pwd_color (prompt_pwd) $prompt (set_color normal) ' '
 end
 
-function attach_screen
+function attach_tmux
 	if test "$TERM" != rxvt-unicode; and test "$TERM" != rxvt-unicode-256color
 		return
 	end
-	if not which screen >/dev/null; or test -n "$STY"
+	if not command -v tmux >/dev/null; or test -n "$TMUX"
 		return
 	end
-	set -l pts
-	set pts (screen -list | grep -m1 Detached | awk '{ print $1 }')
-	if test -z "$pts"
-		exec screen
+	set -l sessions (tmux list-sessions -F '#{session_name}' 2>/dev/null)
+	if test -z "$sessions"
+		exec tmux
 	else
-		exec screen -r $pts
+		exec tmux attach-session
 	end
 end
 
@@ -73,7 +72,7 @@ alias x mupdf
 
 if status --is-interactive
 	if status --is-login
-		attach_screen
+		attach_tmux
 	end
 end
 

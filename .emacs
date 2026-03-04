@@ -236,6 +236,15 @@
 
 ;;find-fileの強化版
 
+;; --- use-package の準備 ---
+;; use-package がインストールされていなければ自動でインストールする
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+;; use-package を読み込む
+(require 'use-package)
+
 ;; Ivy（補完システム）
 (use-package ivy
   :ensure t
